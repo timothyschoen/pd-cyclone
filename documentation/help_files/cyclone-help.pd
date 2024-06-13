@@ -1,3 +1,6 @@
+#N struct 164353-cell float x float y float cellsize float color;
+#N struct 164355-point float x0 float y0 float xs float ys float fg float in float gridx float gridy;
+#N struct 164408-slot float x float y float slotsize float color float width float bordercolor;
 #N canvas 450 25 562 694 10;
 #X declare -lib cyclone -path cyclone;
 #X msg 157 417 about;
@@ -29,8 +32,8 @@
 #X obj 276 273 cyclone/rdiv;
 #X obj 276 293 cyclone/rdiv~;
 #X obj 277 369 cyclone/plusequals~;
-#X obj 276 66 cyclone/comment 160 18 DejaVu\ Sans\ Mono empty 0 0 0 0 0 255 255 255 0 0 alphanumeric;
-#X obj 28 66 cyclone/comment 178 18 DejaVu\ Sans\ Mono empty 0 0 0 0 0 255 255 255 0 0 non alphanumeric;
+#X text 276 66 alphanumeric;
+#X text 133 66 non alphanumeric;
 #X obj 133 99 cyclone/==~;
 #X obj 133 123 cyclone/!=~;
 #X obj 133 148 cyclone/<~;
@@ -79,7 +82,7 @@
 #X text 340 490 flavor;
 #X text 250 490 pd version;
 #X text 142 490 cyclone version;
-#X text 63 98 The cyclone's single binary pack contains non-alphanumeric operator objects that need to be loaded as a library to avoid issues. For more information \, check:, f 71;
+#X text 63 82 The cyclone's single binary pack contains non-alphanumeric operator objects that need to be loaded as a library to avoid issues. For more information \, check:, f 71;
 #X obj 122 573 cnv 17 3 17 empty empty 0 5 9 0 16 #dcdcdc #9c9c9c 0;
 #X text 162 573 list;
 #X obj 122 593 cnv 17 3 17 empty empty 1 5 9 0 16 #dcdcdc #9c9c9c 0;
