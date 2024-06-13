@@ -7,7 +7,7 @@
 
 #define PINK_MAX_OCT 40
 
-static t_class *pink_class;
+static t_class *cyclone_pink_class;
 
 typedef struct _pink{
     t_object       x_obj;
@@ -86,7 +86,7 @@ static void pink_dsp(t_pink *x, t_signal **sp){
 }
 
 static void *pink_new(t_symbol *s, int ac, t_atom *av){
-    t_pink *x = (t_pink *)pd_new(pink_class);
+    t_pink *x = (t_pink *)pd_new(cyclone_pink_class);
     x->x_id = cyrandom_get_id();
     outlet_new(&x->x_obj, &s_signal);
     x->x_sr = 0;
@@ -105,10 +105,10 @@ static void *pink_new(t_symbol *s, int ac, t_atom *av){
     return(x);
 }
 
-CYCLONE_OBJ_API void pink_tilde_setup(void){
-    pink_class = class_new(gensym("pink~"), (t_newmethod)pink_new,
+CYCLONE_OBJ_API void cyclone_pink_tilde_setup(void){
+    cyclone_pink_class = class_new(gensym("pink~"), (t_newmethod)pink_new,
         0, sizeof(t_pink), 0, A_GIMME, 0);
-    class_addfloat(pink_class, pink_oct);
-    class_addmethod(pink_class, (t_method)pink_dsp, gensym("dsp"), A_CANT, 0);
-    class_addmethod(pink_class, (t_method)pink_seed, gensym("seed"), A_GIMME, 0);
+    class_addfloat(cyclone_pink_class, pink_oct);
+    class_addmethod(cyclone_pink_class, (t_method)pink_dsp, gensym("dsp"), A_CANT, 0);
+    class_addmethod(cyclone_pink_class, (t_method)pink_seed, gensym("seed"), A_GIMME, 0);
 }
