@@ -40,13 +40,8 @@
 #X text 111 166 same as;
 #X text 106 467 Control Objects:;
 #X text 319 469 Signal Objects:;
-#X text 367 72 GUI objects:;
 #X text 51 68 Objects loaded from the cyclonex library and its aliases:, f 39;
 #X obj 170 143 cyclone/rminus;
-#X obj 423 317 cyclone/comment 64 10 dejavu\ sans\ mono empty 0 0 0 0 0 255 255 255 0 0 comment;
-#X obj 421 383 cyclone/number~;
-#A saved 0 0 100 -inf inf #2a3434 #ffffff #b6fefd;
-#X obj 420 128 cyclone/scope~ 130 130 256 3 128 -1 1 0 0 0 0 205 229 232 74 79 77 96 98 102 0 empty;
 #X obj 170 166 cyclone/rdiv;
 #X obj 169 204 cyclone/equals~;
 #X obj 169 228 cyclone/notequals~;
@@ -241,9 +236,6 @@
 #X obj 155 2628 cyclone/xnotein;
 #X obj 155 2653 cyclone/xnoteout;
 #X obj 155 2678 cyclone/zl len;
-#X text 414 290 [cyclone/comment]:;
-#X text 419 358 [cyclone/number~]:;
-#X text 427 108 [cyclone/scope~]:;
 #X obj 78 143 !-;
 #X obj 78 166 !/;
 #X obj 78 203 ==~;
@@ -256,8 +248,6 @@
 #X obj 79 375 !-~;
 #X obj 79 399 !/~;
 #X obj 78 423 +=~;
-#X text 501 316 <-- DEPRECATED!!!!;
-#X text 537 384 <-- DEPRECATED!!!!;
 #X text 442 2032 <-- DEPRECATED!!!!;
 #X text 467 1660 <-- DEPRECATED!!!!;
 #X text 469 1688 <-- DEPRECATED!!!!;
