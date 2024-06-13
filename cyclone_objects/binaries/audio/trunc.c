@@ -6,7 +6,7 @@
 // ---------------------------------------------------
 // Class definition
 // ---------------------------------------------------
-static t_class *trunc_class;
+static t_class *cyclone_trunc_class;
 
 // ---------------------------------------------------
 // Data structure definition
@@ -19,8 +19,8 @@ typedef struct _trunc {
 // ---------------------------------------------------
 // Functions signature
 // ---------------------------------------------------
-void * trunc_new(void);// Constructor
-void trunc_destroy(t_trunc *x); //Destructor
+static void * trunc_new(void);// Constructor
+static void trunc_destroy(t_trunc *x); //Destructor
 static t_int * trunc_perform(t_int *w); //Perform function
 static void trunc_dsp(t_trunc *x, t_signal **sp); //DSP function
 
@@ -53,9 +53,9 @@ static void trunc_dsp(t_trunc *x, t_signal **sp)
 // ---------------------------------------------------
 // Constructor of the class
 // ---------------------------------------------------
-void * trunc_new(void)
+static void * trunc_new(void)
 {
-   t_trunc *x = (t_trunc *) pd_new(trunc_class);
+   t_trunc *x = (t_trunc *) pd_new(cyclone_trunc_class);
    x->x_outlet_dsp_0 = outlet_new(&x->x_obj, &s_signal);
    return (void *) x;
 }
@@ -63,7 +63,7 @@ void * trunc_new(void)
 // ---------------------------------------------------
 // Destroy the class
 // ---------------------------------------------------
-void trunc_destroy(t_trunc *x)
+static void trunc_destroy(t_trunc *x)
 {
    outlet_free(x->x_outlet_dsp_0);
 }
@@ -71,17 +71,18 @@ void trunc_destroy(t_trunc *x)
 // ---------------------------------------------------
 // Setup
 // ---------------------------------------------------
-CYCLONE_OBJ_API void trunc_tilde_setup(void) {
-   trunc_class = class_new(gensym("trunc~"),
+CYCLONE_OBJ_API void cyclone_trunc_tilde_setup(void) {
+   cyclone_trunc_class = class_new(gensym("cyclone/trunc~"),
       (t_newmethod) trunc_new, // Constructor
       (t_method) trunc_destroy, // Destructor
       sizeof (t_trunc),
       CLASS_DEFAULT,
       0);//Must always ends with a zero
     
-   class_addmethod(trunc_class, nullfn, gensym("signal"), 0);
-   class_addmethod(trunc_class, (t_method) trunc_dsp, gensym("dsp"), A_CANT, 0);
+   class_addmethod(cyclone_trunc_class, nullfn, gensym("signal"), 0);
+   class_addmethod(cyclone_trunc_class, (t_method) trunc_dsp, gensym("dsp"), A_CANT, 0);
 }
+
 // EOF---------------------------------------------------
 
 
