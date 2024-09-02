@@ -20,7 +20,8 @@ void rand_seed(unsigned int *statep, unsigned int seed)
 	static unsigned int lastticks = 0;
 	/* LATER rethink -- it might fail on faster machine than mine
 	   (but does it matter?) */
-	unsigned int newticks = (unsigned int)(sys_getrealtime() * 1000000.);
+    double rt = sys_getrealtime();
+	unsigned int newticks = (unsigned int)(rt * 1000000.);
 	if (newticks == lastticks)
 	{
 	    failsafe = failsafe * 435898247 + 938284287;

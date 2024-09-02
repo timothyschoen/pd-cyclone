@@ -29,7 +29,7 @@ static t_int *slide_perform(t_int *w)
     while (nblock--)
     {
     float f = *in1++;
-    float output;
+    float output = -123;
 	if (f >= last)
 	{
 	    if (x->x_slide_up > 1.)
@@ -45,6 +45,7 @@ static t_int *slide_perform(t_int *w)
 		output = last = f;
 	}
     if (output == last && output != f) output = f;
+    assert(output != -123);
     *out++ = output;
     last = output; 
     }
