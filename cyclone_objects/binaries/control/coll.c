@@ -1165,10 +1165,14 @@ static void coll_is_opened(t_coll *x, t_floatarg f, t_floatarg open){
 }
 
 static void check_open(t_coll *x, int open){
+#if PLUGDATA
+    sys_vgui("coll_check_open %lld %i", x, open);
+#else
     sys_vgui("if {[winfo exists .%lx]} {\n", (unsigned long)x->x_common->c_filehandle);
     sys_vgui("pdsend \"%s _is_opened 1 %d\"\n", x->x_bindsym->s_name, open);
     sys_vgui("} else {pdsend \"%s _is_opened 0 %d\"\n", x->x_bindsym->s_name, open);
     sys_gui(" }\n");
+#endif
 }
 
 static void coll_update(t_coll *x){
