@@ -587,6 +587,8 @@ static void panel_path(t_file *f, t_symbol *s1, t_symbol *s2){
 }
 
 static void panel_tick(t_file *f){
+    if(!f->f_bindname || !f->f_inidir) return;
+    
     if(f->f_savepanel)
         sys_vgui("panel_open %s {%s}\n", f->f_bindname->s_name, f->f_inidir->s_name);
     else
@@ -661,8 +663,12 @@ t_symbol *panel_getsavedir(t_file *f){
 static void embed_gc(t_pd *x, t_symbol *s, int expected){
     t_pd *garbage;
     int count = 0;
-    while((garbage = pd_findbyclass(s, *x)))
-        pd_unbind(garbage, s), count++;
+    
+    if(s->s_thing == x)
+    {
+        pd_unbind(x, s);
+        count++;
+    }
     if(count != expected)
 	bug("embed_gc (%d garbage bindings)", count);
 }
