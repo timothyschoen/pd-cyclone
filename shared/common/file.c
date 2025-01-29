@@ -663,14 +663,10 @@ t_symbol *panel_getsavedir(t_file *f){
 static void embed_gc(t_pd *x, t_symbol *s, int expected){
     t_pd *garbage;
     int count = 0;
-    
-    if(s->s_thing == x)
-    {
-        pd_unbind(x, s);
-        count++;
-    }
+    while((garbage = pd_findbyclass(s, *x)))
+        pd_unbind(garbage, s), count++;
     if(count != expected)
-	bug("embed_gc (%d garbage bindings)", count);
+    bug("embed_gc (%d garbage bindings)", count);
 }
 
 static void embed_restore(t_pd *master){
