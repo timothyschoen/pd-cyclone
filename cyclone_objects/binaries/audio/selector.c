@@ -1,6 +1,7 @@
 // Derek Kwan - 2016
 
 #include "m_pd.h"
+#include <math.h>
 #include <common/api.h>
 #include "common/magicbit.h"
 //#include <math.h>
@@ -90,7 +91,7 @@ static void *selector_new(t_symbol *s, int argc, t_atom *argv)
     int i;
     int argnum = 0;
     while(argc > 0){
-        if(argv -> a_type == A_FLOAT){
+        if(argv->a_type == A_FLOAT){
             t_float argval = atom_getfloatarg(0, argc, argv);
             switch(argnum){
                 case 0:
@@ -105,9 +106,13 @@ static void *selector_new(t_symbol *s, int argc, t_atom *argv)
             argc--;
             argv++;
             argnum++;
-        };
+        }
+        else {
+            break;
+        }
     };
 
+    sigputs = floor(sigputs);
 	//bounds checking
 	if(sigputs < (t_float)PDCYSELTORSIGPUT){
 		sigputs = PDCYSELTORSIGPUT;
