@@ -35,7 +35,7 @@ static void *tanh_new(void){
 }
 
 CYCLONE_OBJ_API void cyclone_tanh_tilde_setup(void){
-    tanh_class = class_new(gensym("tanh~"),
+    tanh_class = class_new(gensym("cyclone/tanh~"),
         (t_newmethod) tanh_new, 0, sizeof (t_tanh), CLASS_MULTICHANNEL, 0);
     class_addmethod(tanh_class, nullfn, gensym("signal"), 0);
     class_addmethod(tanh_class, (t_method) tanh_dsp, gensym("dsp"), A_CANT, 0);
