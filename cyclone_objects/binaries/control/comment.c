@@ -163,6 +163,8 @@ static void comment_draw_outline(t_comment *x){
             (unsigned long)x, // all%lx
             x->x_zoom,
             x->x_select ? "blue" : "black");
+//            THISGUI->i_selectcolor->s_name :
+//            THISGUI->i_foregroundcolor->s_name);
     }
 }
 
@@ -175,7 +177,9 @@ static void comment_draw_handle(t_comment *x){
         if(x->x_resized)
             x2 = x1 + x->x_max_pixwidth * x->x_zoom;
         sys_vgui("canvas %s -width %d -height %d -bg %s -cursor sb_h_double_arrow\n",
-            ch->h_pathname, COMMENT_HANDLE_WIDTH, x->x_height, "black");
+            ch->h_pathname, COMMENT_HANDLE_WIDTH, x->x_height,
+//                 THISGUI->i_selectcolor->s_name);
+                 "blue");
         sys_vgui("bind %s <Button> {pdsend [concat %s _click 1 \\;]}\n", ch->h_pathname, ch->h_bindsym->s_name);
         sys_vgui("bind %s <ButtonRelease> {pdsend [concat %s _click 0 \\;]}\n", ch->h_pathname, ch->h_bindsym->s_name);
         sys_vgui("bind %s <Motion> {pdsend [concat %s _motion %%x %%y \\;]}\n", ch->h_pathname, ch->h_bindsym->s_name);
@@ -196,9 +200,12 @@ static void comment_draw_inlet(t_comment *x){
         if(x->x_edit &&  x->x_receive == &s_){
             t_canvas *cv = glist_getcanvas(x->x_glist);
             int xpos = text_xpix(&x->x_obj, x->x_glist), ypos = text_ypix(&x->x_obj, x->x_glist);
-            sys_vgui(".x%lx.c create rectangle %d %d %d %d -fill black -tags [list %lx_in all%lx]\n",
-                cv, xpos, ypos, xpos+(IOWIDTH*x->x_zoom), ypos+(IHEIGHT*x->x_zoom)-x->x_zoom,
-                (unsigned long)x, (unsigned long)x);
+            sys_vgui(".x%lx.c create rectangle %d %d %d %d -fill %s -tags [list %lx_in all%lx]\n",
+                     cv, xpos, ypos, xpos+(IOWIDTH*x->x_zoom),
+                     ypos+(IHEIGHT*x->x_zoom)-x->x_zoom,
+//                     THISGUI->i_foregroundcolor->s_name,
+                     "black",
+                     (unsigned long)x, (unsigned long)x);
         }
     }
 }
@@ -234,6 +241,7 @@ static void comment_draw(t_comment *x){
             y2 + 2*x->x_zoom,
             (unsigned long)x,
             (unsigned long)x,
+//            x->x_outline ? THISGUI->i_foregroundcolor->s_name : x->x_bgcolor,
             x->x_outline ? "black" : x->x_bgcolor,
             x->x_bgcolor);
     }
@@ -249,6 +257,7 @@ static void comment_draw(t_comment *x){
         text_ypix((t_text *)x, x->x_glist) + x->x_zoom, // %d
         x->x_fontname->s_name, // {%s}
         x->x_fontsize * x->x_zoom, // -%d
+//        x->x_select ? THISGUI->i_selectcolor->s_name : x->x_color, // %s
         x->x_select ? "blue" : x->x_color, // %s
         x->x_bufsize, // %.
         x->x_buf, // *s
@@ -393,9 +402,13 @@ static void comment_select(t_gobj *z, t_glist *glist, int state){
     x->x_select = state;
     if(!state && x->x_active)
         comment_activate(z, glist, 0);
-    sys_vgui(".x%lx.c itemconfigure txt%lx -fill %s\n", x->x_cv, (unsigned long)x, state ? "blue" : x->x_color);
+    sys_vgui(".x%lx.c itemconfigure txt%lx -fill %s\n", x->x_cv, (unsigned long)x,
+        // state ? THISGUI->i_selectcolor->s_name : x->x_color);
+        state ? "blue" : "black");
     sys_vgui(".x%lx.c itemconfigure %lx_outline -width %d -outline %s\n",
-        x->x_cv, (unsigned long)x, x->x_zoom, state ? "blue" : "black");
+        x->x_cv, (unsigned long)x, x->x_zoom,
+//        state ? THISGUI->i_selectcolor->s_name : THISGUI->i_foregroundcolor->s_name);
+        state ? "blue" : "black");
 // A regular rtext should set 'canvas_editing' variable to its canvas, we don't do it coz
 // we get keys via global binding to "#key" (and coz 'canvas_editing' isn't exported).
 }
@@ -471,8 +484,6 @@ static void comment__click_callback(t_comment *x, t_symbol *s, int ac, t_atom *a
             }
         }
         else if(xx > x->x_x2 - COMMENT_HANDLE_WIDTH){ // start resizing
-            sprintf(outp, ".x%lx.c bind txt%lx <ButtonRelease> {pdsend {%s _release %s}}\n",
-                cv, (unsigned long)x, x->x_bindsym->s_name, x->x_bindsym->s_name);
             outp += strlen(outp);
             sprintf(outp, ".x%lx.c bind txt%lx <Motion> {pdsend {%s _motion %s %%x %%y}}\n",
                 cv, (unsigned long)x, x->x_bindsym->s_name, x->x_bindsym->s_name);
@@ -906,6 +917,7 @@ static void comment_bgcolor(t_comment *x, t_float r, t_float g, t_float b){
             sys_vgui(".x%lx.c itemconfigure bg%lx -outline %s -fill %s\n",
             x->x_cv,
             (unsigned long)x,
+//            x->x_outline ? THISGUI->i_foregroundcolor->s_name : x->x_bgcolor,
             x->x_outline ? "black" : x->x_bgcolor,
             x->x_bgcolor);
     }
@@ -990,7 +1002,9 @@ static void comment_outline(t_comment *x, t_floatarg outline){
             if(x->x_outline || x->x_edit){
                 comment_draw_outline(x);
                 if(x->x_bg_flag)
-                    sys_vgui(".x%lx.c itemconfigure bg%lx -outline black\n", x->x_cv, (unsigned long)x);
+                    sys_vgui(".x%lx.c itemconfigure bg%lx -outline %s\n", x->x_cv, (unsigned long)x,
+                        // THISGUI->i_foregroundcolor->s_name);
+                             "black");
             }
             else{
                 sys_vgui(".x%lx.c delete %lx_outline\n", (unsigned long)x->x_cv, (unsigned long)x);
@@ -1279,7 +1293,7 @@ static void *comment_new(t_symbol *s, int ac, t_atom *av){
             x->x_max_pixwidth = (int)av->a_w.w_float;
             ac--, av++;
             if(ac && av->a_type == A_FLOAT){ // 2ND Size
-                x->x_fontsize = (int)av->a_w.w_float * x->x_zoom;
+                x->x_fontsize = (int)av->a_w.w_float;
                 ac--, av++;
                 if(ac && av->a_type == A_SYMBOL){ // 3RD type
                     x->x_fontname = av->a_w.w_symbol;

@@ -20,16 +20,16 @@ This work is free. You can redistribute it and/or modify it under the terms of t
 
 -------
 
-Current Release: Cyclone 0.9-2 (this release needs at least Pd Vanilla 0.55-0)
+Current Release: Cyclone 0.9-3 (this release needs at least Pd Vanilla 0.55-0)
 
-Released March 14th 2025
+Released May 16th 2025
 
 Find Cyclone's latest releases at: https://github.com/porres/pd-cyclone/releases or directly via Pd's external manager (Help => Find Externals). Please report bugs at https://github.com/porres/pd-cyclone/issues.
 
 -------
 ### About Cyclone:
 
-Outdated versions of cyclone (0.1) are available in the long abandoned Pd-extended distribution (which no one should be using now in the 2020's) as well as in Pd-l2ork and Purr Data - both originally based on Pd-Extended but ported to nw.js (0.1 versions of cyclone here were not fully ported to nw.js at the time of this writing). If you want an up to date version of Cyclone, use Pd Vanilla or PlugData.
+Outdated versions of cyclone (0.1) are available in the long abandoned Pd-extended distribution (which no one should be using now in the 2020's) as well as in Pd-l2ork and Purr Data (both originally based on Pd-Extended but ported to nw.js). If you want an up to date version of Cyclone, use Pd Vanilla or PlugData.
 
 Do you know about PlugData? Cyclone is also part of PlugData by Timothy Schoen, which is a fork of Pd that loads as a standalone or VST with a revamped GUI. ​See: <https://github.com/timothyschoen/PlugData>
 
@@ -112,7 +112,7 @@ You will be requested to provide a path to the pure-data sources and to the pure
 
 On macOS, you can define different deployment target and architectures from your current system using the variables `CMAKE_OSX_DEPLOYMENT_TARGET` and `CMAKE_OSX_ARCHITECTURES`.
 
-You can specify additional compilation flags using the variable `CMAKE_C_FLAGS`.
+You can specify additional compilation flags using the variable `CMAKE_C_FLAGS`. For example, if you have built libpd with multiple instance support, set `CMAKE_C_FLAGS` to `'-DPDINSTANCE=1'`.
 
 CMake can now generate Makefiles, a MSVC solution, or an XCode project.
 
