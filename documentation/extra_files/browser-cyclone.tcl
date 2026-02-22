@@ -69,11 +69,11 @@ proc category_cyclone_menu::load_menutree {} {
             {append clip~ comment forward maximum~ minimum~ number~ pow~ xbendin xbendin2 xbendout xbendout2}}
     }
 #   ::pdwindow::post "===== RAW MENUTREE =====\n"
-    set index 0
-    foreach item $menutree {
+#    set index 0
+#    foreach item $menutree {
 #        ::pdwindow::post "Item $index: $item\n"
-        incr index
-    }
+#        incr index
+#    }
     return $menutree
 }
 
@@ -201,46 +201,15 @@ proc category_cyclone_menu::write_config {{filename browser.cfg}} {
     ::pd_guiprefs::write cyclone_browser_enabled $::category_cyclone_menu::enabled
 }
 
-proc category_cyclone_menu::menu_option_gui {} {
-    if {[winfo exists .cyclone_options]} {
-        focus .cyclone_options
-        return
-    }
-
-    toplevel .cyclone_options
-    wm title .cyclone_options "Cyclone Browser"
-    wm geometry .cyclone_options 300x100
-
-    frame .cyclone_options.f -padx 6 -pady 6
-    pack .cyclone_options.f -fill both -expand 1
-
-    frame .cyclone_options.f.inner
-    pack .cyclone_options.f.inner -expand 1
-
-    checkbutton .cyclone_options.f.inner.enable \
-        -text "Enable browser" \
-        -variable ::category_cyclone_menu::enabled \
-        -command {category_cyclone_menu::write_config}
-
-    pack .cyclone_options.f.inner.enable -anchor center -pady 4
-}
-
 trace add execution ::pdtk_canvas::create_popup leave category_cyclone_menu::create
 
 proc category_cyclone_menu::add_menu_entry {} {
     .preferences add separator
-    .preferences add command \
-        -label [_ "Cyclone-Browser-plugin"] \
-        -command {category_cyclone_menu::menu_option_gui}
+    .preferences add checkbutton \
+        -label [_ "Enable Cyclone Browser"] \
+        -variable ::category_cyclone_menu::enabled \
+        -command {category_cyclone_menu::write_config}
 }
 
-proc category_cyclone_menu::add_menu_entry {} {
-    .preferences add separator
-    .preferences add command \
-        -label [_ "Cyclone-Browser-plugin"] \
-        -command {category_cyclone_menu::menu_option_gui}
-}
-
-category_cyclone_menu::add_menu_entry
 category_cyclone_menu::read_browser_cfg
-
+category_cyclone_menu::add_menu_entry
