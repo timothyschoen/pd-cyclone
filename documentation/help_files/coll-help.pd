@@ -90,7 +90,7 @@
 #X text 174 157 an int address and any message to insert \, increments equal/greater addresses, f 79;
 #X text 33 127 flags <float \, float> -;
 #X text 174 97 <1> saves contents with the patch \, <0> doesn't, f 79;
-#X text 174 127 first flag is the embed flag \, second is unused (just use 'embed' isntead), f 79;
+#X text 174 127 first flag is the embed flag \, second is unused (just use 'embed' instead), f 79;
 #X text 51 142 goto <int/symbol> -;
 #X text 174 82 sets the pointer to the last entry/address, f 79;
 #X text 63 412 renumber2 <int> -;
@@ -128,7 +128,7 @@
 #X text 189 607 non-0 prevents from searching for a file (default 0);
 #X text 146 654 @threaded: <1> threaded processing (default) \, <0> unthreaded;
 #N canvas 605 84 622 576 details 0;
-#N canvas 517 308 804 263 embbed 0;
+#N canvas 517 308 804 263 embed 0;
 #X msg 92 99 dump;
 #X obj 93 219 print coll_embedded;
 #X text 219 221 print address/data;
@@ -138,11 +138,11 @@
 #X obj 465 195 cyclone/coll;
 #C restore;
 #X obj 92 141 cyclone/coll @embed 1;
-#C flags 1 0;
 #C 0 zero;
 #C 1 one;
 #C 2 two;
 #C 3 three;
+#C flags 1 0;
 #C restore;
 #X text 23 19 By default \, the contents of [coll] are not saved as part of the patch \, but you can change that! Check the example below where the contents of [coll] were stored with this example patch. Dump the contents and check it.;
 #X text 487 122 (1: saves with the patch \, 0: doesn't save);
@@ -154,7 +154,7 @@
 #X connect 7 0 10 1;
 #X connect 7 1 10 0;
 #X connect 10 0 1 0;
-#X restore 526 177 pd embbed;
+#X restore 526 177 pd embed;
 #N canvas 488 133 807 482 sort 0;
 #X msg 444 167 sort 1 -1;
 #X obj 27 155 cyclone/prepend store;
@@ -703,11 +703,11 @@
 #C restore;
 #X text 456 16 The basic navigation through [coll]'s data is with the "next" (same as a bang) or "prev" messages that \, respectively \, go to the next and the previous address.;
 #X text 39 28 You can also use the 1st argument to specify a filename for [coll] to load when isntantiated. The read/write messages allow you to read/write from and to other files.;
-#X text 204 310 (also bangs on isntantiation);
 #X obj 180 333 print done_reading;
 #X text 205 294 bang when finishing read operation;
-#X text 456 66 The pointer to the address is set for all [coll] objects with the same 1st argument (name or filename). So navigating in the object to the left affects the navigation of the object below. The "goto <address>" message ses the pointer to an address \, "start" goes to the first address \, "end" goes to the last one.;
 #X text 457 295 Note how above there's a 2nd argument to prevent it from searching for a file because the [coll] to the left already loaded the file - since [coll] objects with the same name share data \, it doesn't need to load the file again!;
+#X text 204 310 (also bangs on instantiation);
+#X text 456 66 The pointer to the address is set for all [coll] objects with the same 1st argument (name or filename). So navigating in the object to the left affects the navigation of the object below. The "goto <address>" message sets the pointer to an address \, "start" goes to the first address \, "end" goes to the last one.;
 #X connect 0 0 19 0;
 #X connect 1 0 19 0;
 #X connect 2 0 19 0;
@@ -716,7 +716,7 @@
 #X connect 6 0 19 0;
 #X connect 7 0 19 0;
 #X connect 9 0 19 0;
-#X connect 10 0 32 0;
+#X connect 10 0 31 0;
 #X connect 11 0 19 0;
 #X connect 19 0 4 0;
 #X connect 19 1 8 0;
@@ -745,7 +745,7 @@
 #X text 204 99 associates foo & 1;
 #X text 233 151 associates bar & 2;
 #X text 253 173 deassociates bar & 2;
-#X text 24 17 Use "assoc" and "deassoc" to associate and deassociate a symbol alias to an int address \, so you can optionally use the symbol name address isntead of the int address.;
+#X text 24 17 Use "assoc" and "deassoc" to associate and deassociate a symbol alias to an int address \, so you can optionally use the symbol name address instead of the int address.;
 #X obj 46 123 loadbang;
 #X msg 218 239 remove foo;
 #X text 289 239 *;
@@ -848,11 +848,11 @@
 #X text 173 90 <= click and check the printed order;
 #X text 42 102 try in both;
 #X text 78 122 modes;
-#X text 61 17 Unthreaded mode always provide the depth first behaviour \, meaning that the print order below is "1 \, 2 \, 3". The threaded mode breaks it for the read and dump operations \, printing: "1 \, 3 \, 2" isntead.;
+#X text 61 17 Unthreaded mode always provide the depth first behaviour \, meaning that the print order below is "1 \, 2 \, 3". The threaded mode breaks it for the read and dump operations \, printing: "1 \, 3 \, 2" instead.;
 #X obj 160 201 cyclone/coll depth 1 @threaded 0;
 #C restore;
 #X text 77 370 One way or another \, if an action is needed right after reading or dumping \, you should use and rely on the bangs from the outlets \, which are there for this reason and is the best practice for [coll] in any case.;
-#X text 77 436 For old patches that used [trigger] isntead of the best practice \, it is encouraged that they are adapted to use the 3rd/4th outlets now and not the "threaded 0" attribute.;
+#X text 77 436 For old patches that used [trigger] instead of the best practice \, it is encouraged that they are adapted to use the 3rd/4th outlets now and not the "threaded 0" attribute.;
 #X msg 144 122 read coll_big.txt;
 #X msg 144 278 3;
 #X msg 363 276 ===== \, 1;
