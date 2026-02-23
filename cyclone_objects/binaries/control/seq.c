@@ -408,17 +408,23 @@ nextevent:
 
 /* timeout handler ('tick' is late) */
 static void seq_slaveclocktick(t_seq *x){
-    if(x->x_mode == SEQ_SLAVEMODE) clock_unset(x->x_clock);
+    clock_unset(x->x_clock);
 }
 
 // LATER dealing with self-invokation (outlet -> 'tick')
 static void seq_tick(t_seq *x){
     if(x->x_mode == SEQ_SLAVEMODE){
-        if(x->x_slaveprevtime >= 0){
+        if(x->x_slaveprevtime == 0){ // first tick
+            x->x_clockdelay = 0.;
+            x->x_prevtime = 0.;
+            x->x_slaveprevtime = clock_getlogicaltime();
+            x->x_timescale = 1.;
+        }
+        else{
             double elapsed = clock_gettimesince(x->x_slaveprevtime);
-            if(elapsed < SEQ_MINTICKDELAY)
-                return;
-            clock_delay(x->x_slaveclock, elapsed);
+//            if(elapsed < SEQ_MINTICKDELAY)
+//                return;
+            clock_delay(x->x_slaveclock, elapsed); // clock unset
             seq_settimescale(x, (float)(elapsed * (SEQ_TICKSPERSEC / 1000.)));
             if(SEQ_ISRUNNING(x)){
                 x->x_clockdelay -= clock_gettimesince(x->x_prevtime);
@@ -432,12 +438,6 @@ static void seq_tick(t_seq *x){
             x->x_prevtime = clock_getlogicaltime();
             x->x_slaveprevtime = x->x_prevtime;
             x->x_timescale = x->x_newtimescale;
-        }
-        else{
-            x->x_clockdelay = 0.;  // redundant
-            x->x_prevtime = 0.;    // redundant
-            x->x_slaveprevtime = clock_getlogicaltime();
-            x->x_timescale = 1.;   // redundant
         }
     }
 }
