@@ -72,6 +72,7 @@ static void *poltocar_new(void)
     return (x);
 }
 
+/*
 CYCLONE_OBJ_API void poltocar_tilde_setup(void)
 {
     poltocar_class = class_new(gensym("poltocar~"),
@@ -79,4 +80,4 @@ CYCLONE_OBJ_API void poltocar_tilde_setup(void)
             sizeof(t_poltocar), 0, 0);
     class_addmethod(poltocar_class, nullfn, gensym("signal"), 0);
     class_addmethod(poltocar_class, (t_method) poltocar_dsp, gensym("dsp"), A_CANT, 0);
-}
+}*/

@@ -113,10 +113,11 @@ static void *cartopol_new(void)
     return (x);
 }
 
+/*
 CYCLONE_OBJ_API void cartopol_tilde_setup(void)
 {
     cartopol_class = class_new(gensym("cartopol~"), (t_newmethod)cartopol_new, 0,
             sizeof(t_cartopol), 0, 0);
     class_addmethod(cartopol_class, nullfn, gensym("signal"), 0);
     class_addmethod(cartopol_class, (t_method) cartopol_dsp, gensym("dsp"), A_CANT, 0);
-}
+} */
