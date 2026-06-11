@@ -47,9 +47,9 @@ static void *atan2_new(t_floatarg f) // arg = x (not documented in max)
     return (x);
 }
 
-CYCLONE_OBJ_API void atan2_tilde_setup(void)
+CYCLONE_OBJ_API void cyclone_atan2_tilde_setup(void)
 {
-    atan2_class = class_new(gensym("atan2~"), (t_newmethod)atan2_new, 0,
+    atan2_class = class_new(gensym("cyclone/atan2~"), (t_newmethod)atan2_new, 0,
         sizeof(t_atan2), CLASS_DEFAULT, A_DEFFLOAT, 0);
     class_addmethod(atan2_class, (t_method)atan2_dsp, gensym("dsp"), A_CANT, 0);
     CLASS_MAINSIGNALIN(atan2_class, t_atan2, x_input);
