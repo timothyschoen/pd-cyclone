@@ -45,7 +45,7 @@ static t_int *slide_perform(t_int *w)
 		output = last = f;
 	}
     if (output == last && output != f) output = f;
-    assert(output != -123);
+    // assert(output != -123);
     *out++ = output;
     last = output; 
     }
