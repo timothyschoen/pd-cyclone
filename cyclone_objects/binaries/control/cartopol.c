@@ -39,11 +39,10 @@ static void *cartopol_new(void){
     return (x);
 }
 
-/*
-CYCLONE_OBJ_API void cartopol_setup(void){
-    cartopol_class = class_new(gensym("cartopol"),(t_newmethod)cartopol_new, 0,
+CYCLONE_OBJ_API void cyclone_cartopol_setup(void){
+    cartopol_class = class_new(gensym("cyclone/cartopol"),(t_newmethod)cartopol_new, 0,
 			       sizeof(t_cartopol), 0, 0);
     class_addfloat(cartopol_class, cartopol_float);
     class_addbang(cartopol_class, cartopol_bang);
 
-} */
+}
