@@ -1678,6 +1678,7 @@ errstate:
     return(NULL);
 }
 
+/*
 CYCLONE_OBJ_API void scope_tilde_setup(void){
     scope_class = class_new(gensym("scope~"), (t_newmethod)scope_new,
             (t_method)scope_free, sizeof(t_scope), 0, A_GIMME, 0);
@@ -1774,4 +1775,4 @@ CYCLONE_OBJ_API void Scope_tilde_setup(void){
     scope_widgetbehavior.w_clickfn    = (t_clickfn)scope_click;
     pd_error(scope_class, "Cyclone: please use [scope~] instead of [Scope~] to suppress this error");
     class_sethelpsymbol(scope_class, gensym("scope~"));
-}
+} */
