@@ -45,6 +45,65 @@ static t_probtrans *prob_findstate(t_prob *x, int value, int complain){
     return(state);
 }
 
+#ifdef PDL2ORK
+static void prob_list(t_prob *x, t_symbol *s, int ac, t_atom *av);
+static void prob_clear(t_prob *x);
+
+static void prob_update(t_prob *x){
+    t_probtrans *state;
+    char buf[64];
+    for(state = x->x_translist; state; state = state->tr_nextstate){
+        t_probtrans *trans;
+        for(trans = state->tr_nexttrans; trans; trans = trans->tr_nexttrans){
+            sprintf(buf, "%d %d %d\n", state->tr_value, trans->tr_value, trans->tr_count);
+            editor_append(x->x_filehandle, buf);
+        }
+    }
+}
+
+static void prob_editorhook(t_pd *z, t_symbol *s, int ac, t_atom *av){
+    s = NULL;
+    t_prob *x = (t_prob *)z;
+    prob_clear(x);
+    while(ac >= 3){
+        if(av[0].a_type == A_FLOAT && av[1].a_type == A_FLOAT && av[2].a_type == A_FLOAT){
+            t_atom list_av[3];
+            list_av[0] = av[0];
+            list_av[1] = av[1];
+            list_av[2] = av[2];
+            prob_list(x, 0, 3, list_av);
+            ac -= 3;
+            av += 3;
+        } else {
+            ac--;
+            av++;
+        }
+        while(ac > 0 && (av->a_type == A_SEMI || av->a_type == A_COMMA)){
+            ac--;
+            av++;
+        }
+    }
+    t_canvas *cv = canvas_getcurrent();
+    if(cv)
+        canvas_dirty(cv, 1);
+}
+
+static void prob_click(t_prob *x, t_floatarg xpos, t_floatarg ypos,
+t_floatarg shift, t_floatarg ctrl, t_floatarg alt){
+    xpos = ypos = shift = ctrl = alt = 0;
+    t_probtrans *state;
+    char buf[64];
+    editor_open(x->x_filehandle, "prob", "prob");
+    for(state = x->x_translist; state; state = state->tr_nextstate){
+        t_probtrans *trans;
+        for(trans = state->tr_nexttrans; trans; trans = trans->tr_nexttrans){
+            sprintf(buf, "%d %d %d\n", state->tr_value, trans->tr_value, trans->tr_count);
+            editor_append(x->x_filehandle, buf);
+        }
+    }
+}
+#endif
+
 static void prob_embedhook(t_pd *z, t_binbuf *bb, t_symbol *bindsym){
     t_prob *x = (t_prob *)z;
     if(x->x_embedmode){
@@ -89,10 +148,60 @@ static void prob_clear(t_prob *x){
     x->x_translist = 0;
     x->x_state = 0;
     x->x_default = 0;  // CHECKED: default number is not kept
+#ifdef PDL2ORK
+    prob_update(x);
+#endif
+}
+
+static void prob_bang(t_prob *x){
+    if(x->x_state){  // no output after clear
+        int rnd = rand_int(&x->x_seed, x->x_state->tr_count);
+        t_probtrans *trans = x->x_state->tr_nexttrans;
+        if(trans){
+            for(trans = x->x_state->tr_nexttrans; trans; trans = trans->tr_nexttrans)
+                if((rnd -= trans->tr_count) < 0)
+                    break;
+            if(trans){
+                t_probtrans *nextstate = trans->tr_suffix;
+                if(nextstate){
+                    outlet_float(((t_object *)x)->ob_outlet, nextstate->tr_value);
+                    x->x_state = nextstate;
+                }
+                else
+                    pd_error(x, "[prob] bug; prob_bang: void suffix");
+            }
+            else
+                pd_error(x, "[prob] bug; prob_bang: search overflow");
+        }
+        else{
+            outlet_bang(x->x_bangout);
+            if(x->x_default)  // CHECKED: stays at dead-end if no default
+                x->x_state = x->x_default;
+        }
+    }
+}
+
+static void prob_float(t_prob *x, t_float f){
+    int value = (int)f;
+    if(f == value){ // CHECKED
+        t_probtrans *state = prob_findstate(x, value, 1);
+        if(state)  // CHECKED
+            x->x_state = state;
+    }
+    else
+        pd_error(x, "[prob]: doesn't understand \"noninteger float\"");
 }
 
 static void prob_list(t_prob *x, t_symbol *s, int ac, t_atom *av){
     s = NULL;
+    if(!ac){
+        prob_bang(x);
+        return;
+    }
+    if(ac == 1 && av->a_type == A_FLOAT){
+        prob_float(x, av->a_w.w_float);
+        return;
+    }
     int prefval, suffval, count;
     if (ac == 3 && av->a_type == A_FLOAT
     && av[1].a_type == A_FLOAT && av[2].a_type == A_FLOAT
@@ -146,12 +255,16 @@ static void prob_list(t_prob *x, t_symbol *s, int ac, t_atom *av){
         }
         if(!x->x_state)  /* CHECKED */
             x->x_state = prefix;  /* CHECKED */
+#ifdef PDL2ORK
+        prob_update(x);
+#endif
     }
     else
         pd_error(x, "[prob]: bad list message format");  /* CHECKED */
+#ifndef PDL2ORK
     if(x->x_embedmode && x->x_canvas)
         canvas_dirty(x->x_canvas, 1);
-        
+#endif
 }
 
 static void prob_dump(t_prob *x){ // CHECKED
@@ -163,45 +276,6 @@ static void prob_dump(t_prob *x){ // CHECKED
             post(" from %3d to %3d: %d", state->tr_value, trans->tr_value, trans->tr_count);
         post("total weights for state %d: %d", state->tr_value, state->tr_count);
     }
-}
-
-static void prob_bang(t_prob *x){
-    if(x->x_state){  // no output after clear
-        int rnd = rand_int(&x->x_seed, x->x_state->tr_count);
-        t_probtrans *trans = x->x_state->tr_nexttrans;
-        if(trans){
-            for(trans = x->x_state->tr_nexttrans; trans; trans = trans->tr_nexttrans)
-                if((rnd -= trans->tr_count) < 0)
-                    break;
-            if(trans){
-                t_probtrans *nextstate = trans->tr_suffix;
-                if(nextstate){
-                    outlet_float(((t_object *)x)->ob_outlet, nextstate->tr_value);
-                    x->x_state = nextstate;
-                }
-                else
-                    pd_error(x, "[prob] bug; prob_bang: void suffix");
-            }
-            else
-                pd_error(x, "[prob] bug; prob_bang: search overflow");
-        }
-        else{
-            outlet_bang(x->x_bangout);
-            if(x->x_default)  // CHECKED: stays at dead-end if no default
-                x->x_state = x->x_default;
-        }
-    }
-}
-
-static void prob_float(t_prob *x, t_float f){
-    int value = (int)f;
-    if(f == value){ // CHECKED
-        t_probtrans *state = prob_findstate(x, value, 1);
-        if(state)  // CHECKED
-            x->x_state = state;
-    }
-    else
-        pd_error(x, "[prob]: doesn't understand \"noninteger float\"");
 }
 
 static void prob_free(t_prob *x){
@@ -218,8 +292,12 @@ static void *prob_new(void){
     rand_seed(&x->x_seed, 0);
     outlet_new((t_object *)x, &s_float);
     x->x_bangout = outlet_new((t_object *)x, &s_bang);
+#ifdef PDL2ORK
+    x->x_filehandle = file_new((t_pd *)x, prob_embedhook, 0, 0, prob_editorhook);
+#else
     x->x_filehandle = file_new((t_pd *)x, prob_embedhook, 0, 0, 0);
     x->x_canvas = canvas_getcurrent();
+#endif
     return (x);
 }
 
@@ -233,5 +311,9 @@ CYCLONE_OBJ_API void prob_setup(void){
     class_addmethod(prob_class, (t_method)prob_reset, gensym("reset"), A_FLOAT, 0);
     class_addmethod(prob_class, (t_method)prob_clear, gensym("clear"), 0);
     class_addmethod(prob_class, (t_method)prob_dump, gensym("dump"), 0);
+#ifdef PDL2ORK
+    class_addmethod(prob_class, (t_method)prob_click, gensym("click"),
+        A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, A_FLOAT, 0);
+#endif
     file_setup(prob_class, 1);
 }

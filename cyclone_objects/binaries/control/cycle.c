@@ -69,6 +69,10 @@ static void cycle_symbol(t_cycle *x, t_symbol *s)
 
 static void cycle_list(t_cycle *x, t_symbol *s, int ac, t_atom *av)
 {
+    if(!ac){
+        cycle_bang(x);
+        return;
+    }
     if ((x->x_eventmode && cycle_isnextevent(x)) || x->x_index >= x->x_nouts)
 	x->x_index = 0;
     while (ac--)
@@ -84,7 +88,8 @@ static void cycle_list(t_cycle *x, t_symbol *s, int ac, t_atom *av)
 
 static void cycle_anything(t_cycle *x, t_symbol *s, int ac, t_atom *av)
 {
-    if (s && s != &s)
+    
+    if (s && s != &s_)
     {
        if(ac > 1)  cycle_symbol(x, s);  /* CHECKED */
        else
