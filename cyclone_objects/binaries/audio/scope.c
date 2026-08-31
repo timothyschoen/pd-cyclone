@@ -1724,7 +1724,6 @@ CYCLONE_OBJ_API void scope_tilde_setup(void){
     scope_widgetbehavior.w_deletefn   = scope_delete;
     scope_widgetbehavior.w_visfn      = scope_vis;
     scope_widgetbehavior.w_clickfn    = (t_clickfn)scope_click;
-    #include "scope_dialog.c"
 }
 
 CYCLONE_OBJ_API void Scope_tilde_setup(void){  
@@ -1773,7 +1772,6 @@ CYCLONE_OBJ_API void Scope_tilde_setup(void){
     scope_widgetbehavior.w_deletefn   = scope_delete;
     scope_widgetbehavior.w_visfn      = scope_vis;
     scope_widgetbehavior.w_clickfn    = (t_clickfn)scope_click;
-    #include "scope_dialog.c"
     pd_error(scope_class, "Cyclone: please use [scope~] instead of [Scope~] to suppress this error");
     class_sethelpsymbol(scope_class, gensym("scope~"));
 }
