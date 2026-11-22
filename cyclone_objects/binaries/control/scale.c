@@ -226,7 +226,7 @@ static void *scale_new(t_symbol *s, int ac, t_atom *av){
     return(x);
 }
 
-CYCLONE_OBJ_API void scale_setup(void){
+CYCLONE_OBJ_API void cyclone_scale_setup(void){
     t_class *c;
     scale_class = class_new(gensym("scale"), (t_newmethod)scale_new,
         (t_method)scale_free,sizeof(t_scale), 0, A_GIMME, 0);

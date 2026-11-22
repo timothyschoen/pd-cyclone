@@ -60,6 +60,7 @@ static void *greaterthaneq_new(t_floatarg f)
     x->x_inlet = inlet_new((t_object *)x, (t_pd *)x, &s_signal, &s_signal);
     pd_float((t_pd *)x->x_inlet, f);
     outlet_new((t_object *)x, &s_signal);
+    pd_error(x, "[cyclone/greaterthaneq~] is deprecated, consider using vanilla's [>~] instead");
     return (x);
 }
 
@@ -74,5 +75,4 @@ CYCLONE_OBJ_API void greaterthaneq_tilde_setup(void)
                                   sizeof(t_greaterthaneq), CLASS_DEFAULT, A_DEFFLOAT, 0);
     class_addmethod(greaterthaneq_class, nullfn, gensym("signal"), 0);
     class_addmethod(greaterthaneq_class, (t_method)greaterthaneq_dsp, gensym("dsp"), A_CANT, 0);
-    pd_error(greaterthaneq_class, "[cyclone/greaterthaneq~] is deprecated, consider using vanilla's [>~] instead");
 }

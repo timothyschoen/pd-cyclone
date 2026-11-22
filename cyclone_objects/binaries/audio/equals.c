@@ -45,6 +45,7 @@ static void *equals_new(t_floatarg f)
     x->x_inlet = inlet_new((t_object *)x, (t_pd *)x, &s_signal, &s_signal);
     pd_float((t_pd *)x->x_inlet, f);
     outlet_new((t_object *)x, &s_signal);
+    pd_error(x, "[cyclone/equals~] is deprecated, consider using vanilla's [==~] instead");
     return (x);
 }
 
@@ -56,5 +57,4 @@ CYCLONE_OBJ_API void equals_tilde_setup(void)
             sizeof(t_equals), CLASS_DEFAULT, A_DEFFLOAT, 0);
     class_addmethod(equals_class, nullfn, gensym("signal"), 0);
     class_addmethod(equals_class, (t_method)equals_dsp, gensym("dsp"), A_CANT, 0);
-    pd_error(equals_class, "[cyclone/equals~] is deprecated, consider using vanilla's [==~] instead");
 }

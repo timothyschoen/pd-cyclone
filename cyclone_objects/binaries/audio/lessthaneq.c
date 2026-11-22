@@ -60,6 +60,7 @@ static void *lessthaneq_new(t_floatarg f)
     x->x_inlet = inlet_new((t_object *)x, (t_pd *)x, &s_signal, &s_signal);
     pd_float((t_pd *)x->x_inlet, f);
     outlet_new((t_object *)x, &s_signal);
+    pd_error(x, "[cyclone/lessthaneq~] is deprecated, consider using vanilla's [<=~] instead");
     return (x);
 }
 
@@ -74,5 +75,4 @@ CYCLONE_OBJ_API void lessthaneq_tilde_setup(void)
                                sizeof(t_lessthaneq), CLASS_DEFAULT, A_DEFFLOAT, 0);
     class_addmethod(lessthaneq_class, nullfn, gensym("signal"), 0);
     class_addmethod(lessthaneq_class, (t_method)lessthaneq_dsp, gensym("dsp"), A_CANT, 0);
-    pd_error(lessthaneq_class, "[cyclone/lessthaneq~] is deprecated, consider using vanilla's [<=~] instead");
 }

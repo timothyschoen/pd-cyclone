@@ -152,8 +152,8 @@ static void *pink_new(t_symbol *s, int ac, t_atom *av){
     return(x);
 }
 
-CYCLONE_OBJ_API void pink_tilde_setup(void){
-    pink_class = class_new(gensym("pink~"), (t_newmethod)pink_new,
+CYCLONE_OBJ_API void cyclone_pink_tilde_setup(void){
+    pink_class = class_new(gensym("cyclone/pink~"), (t_newmethod)pink_new,
         (t_method)pink_free, sizeof(t_pink), CLASS_MULTICHANNEL, A_GIMME, 0);
     class_addmethod(pink_class, (t_method)pink_dsp, gensym("dsp"), A_CANT, 0);
     class_addfloat(pink_class, pink_oct);

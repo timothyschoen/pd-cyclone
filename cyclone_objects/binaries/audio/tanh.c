@@ -28,14 +28,14 @@ static void tanh_dsp(t_tanh *x, t_signal **sp){
         sp[0]->s_vec, sp[1]->s_vec);
 }
 
-void *tanh_new(void){
+static void *tanh_new(void){
     t_tanh *x = (t_tanh *)pd_new(tanh_class);
     outlet_new(&x->x_obj, &s_signal);
     return(void *)x;
 }
 
-CYCLONE_OBJ_API void tanh_tilde_setup(void){
-    tanh_class = class_new(gensym("tanh~"),
+CYCLONE_OBJ_API void cyclone_tanh_tilde_setup(void){
+    tanh_class = class_new(gensym("cyclone/tanh~"),
         (t_newmethod) tanh_new, 0, sizeof (t_tanh), CLASS_MULTICHANNEL, 0);
     class_addmethod(tanh_class, nullfn, gensym("signal"), 0);
     class_addmethod(tanh_class, (t_method) tanh_dsp, gensym("dsp"), A_CANT, 0);

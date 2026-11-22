@@ -536,13 +536,13 @@ void editor_open(t_file *f, char *title, char *owner){
         owner = 0;
     }
     if(owner)
-        sys_vgui("editor_open .%lx %dx%d {%s: %s} %d #%06X #%06X #%06X %i\n",
-        (unsigned long)f, 600, 340, owner, title, (f->f_editorfn != 0),
+        sys_vgui("editor_open .%llx %dx%d {%s: %s} %d #%06X #%06X #%06X %i\n",
+        (unsigned long long)f, 600, 340, owner, title, (f->f_editorfn != 0),
         THISGUI->i_backgroundcolor, THISGUI->i_foregroundcolor, THISGUI->i_selectcolor,
         sys_hostfontsize(glist_getfont(f->f_canvas), glist_getzoom(f->f_canvas)) * 6 / 5);
     else
-        sys_vgui("editor_open .%lx %dx%d {%s} %d #%06X #%06X #%06X %i\n",
-        (unsigned long)f, 600, 340, (title ? title : "Untitled"),
+        sys_vgui("editor_open .%llx %dx%d {%s} %d #%06X #%06X #%06X %i\n",
+        (unsigned long long)f, 600, 340, (title ? title : "Untitled"),
         (f->f_editorfn != 0),
         THISGUI->i_backgroundcolor, THISGUI->i_foregroundcolor, THISGUI->i_selectcolor,
         sys_hostfontsize(glist_getfont(f->f_canvas), glist_getzoom(f->f_canvas)) * 6 / 5);
@@ -550,7 +550,7 @@ void editor_open(t_file *f, char *title, char *owner){
 }
 
 static void editor_tick(t_file *f){
-    sys_vgui("editor_close .%lx 1\n", (unsigned long)f);
+    sys_vgui("editor_close .%llx 1\n", (unsigned long long)f);
 }
 
 #ifdef PDL2ORK
@@ -571,7 +571,7 @@ void editor_close(t_file *f, int ask){
            a message box redraw to happen -- LATER investigate */
         clock_delay(f->f_editorclock, 0);
     else
-        sys_vgui("editor_close .%lx %d %d\n", (unsigned long)f, ask, sendable);
+        sys_vgui("editor_close .%llx %d %d\n", (unsigned long long)f, ask, sendable);
 }
 #endif
 
@@ -594,14 +594,14 @@ void editor_append(t_file *f, char *contents){
             if(*ptr == '{' || *ptr == '}'){
                 char c = *ptr;
                 *ptr = 0;
-                sys_vgui("editor_append .%lx {%s}\n", (unsigned long)f, contents);
-                sys_vgui("editor_append .%lx \"%c\"\n", (unsigned long)f, c);
+                sys_vgui("editor_append .%llx {%s}\n", (unsigned long long)f, contents);
+                sys_vgui("editor_append .%llx \"%c\"\n", (unsigned long long)f, c);
                 *ptr = c;
                 contents = ptr + 1;
             }
         }
         if(*contents)
-            sys_vgui("editor_append .%lx {%s}\n", (unsigned long)f, contents);
+            sys_vgui("editor_append .%llx {%s}\n", (unsigned long long)f, contents);
     }
 #endif
 }
@@ -612,7 +612,7 @@ void editor_setdirty(t_file *f, int flag){
         gui_vmess("gui_text_dialog_set_dirty", "xi", f, flag);
 #else
     if(f->f_editorfn)
-        sys_vgui("editor_setdirty .%lx %d\n", (unsigned long)f, flag);
+        sys_vgui("editor_setdirty .%llx %d\n", (unsigned long long)f, flag);
 #endif
 }
 
@@ -931,7 +931,7 @@ t_filefn readfn, t_filefn writefn, t_filefn updatefn){
     if(readfn || writefn){
         t_file *f;
         char buf[64];
-        sprintf(buf, "miXed.%lx", (unsigned long)result);
+        sprintf(buf, "miXed.%llx", (unsigned long long)result);
         result->f_bindname = gensym(buf);
         pd_bind((t_pd *)result, result->f_bindname);
         result->f_currentdir = result->f_inidir = canvas_getdir(result->f_canvas);
@@ -940,7 +940,7 @@ t_filefn readfn, t_filefn writefn, t_filefn updatefn){
         f = (t_file *)pd_new(file_class);
         f->f_master = master;
         f->f_canvas = result->f_canvas;
-        sprintf(buf, "miXed.%lx", (unsigned long)f);
+        sprintf(buf, "miXed.%llx", (unsigned long long)f);
         f->f_bindname = gensym(buf);
         pd_bind((t_pd *)f, f->f_bindname);
         f->f_currentdir = f->f_inidir = result->f_currentdir;
@@ -955,7 +955,7 @@ t_filefn readfn, t_filefn writefn, t_filefn updatefn){
         result->f_editorclock = clock_new(result, (t_method)editor_tick);
         if(!result->f_bindname){
             char buf[64];
-            sprintf(buf, "miXed.%lx", (unsigned long)result);
+            sprintf(buf, "miXed.%llx", (unsigned long long)result);
             result->f_bindname = gensym(buf);
             pd_bind((t_pd *)result, result->f_bindname);
         }
