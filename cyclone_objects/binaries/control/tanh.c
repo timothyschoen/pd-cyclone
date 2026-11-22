@@ -40,8 +40,8 @@ static void *tanh_new(t_floatarg f){
     return(x);
 }
 
-CYCLONE_OBJ_API void tanh_setup(void){
-    tanh_class = class_new(gensym("tanh"), (t_newmethod)tanh_new, 0,
+CYCLONE_OBJ_API void cyclone_tanh_setup(void){
+    tanh_class = class_new(gensym("cyclone/tanh"), (t_newmethod)tanh_new, 0,
         sizeof(t_tanh), 0, A_DEFFLOAT, 0);
     class_addbang(tanh_class, (t_method)tanh_bang);
     class_addlist(tanh_class, (t_method)tanh_list);

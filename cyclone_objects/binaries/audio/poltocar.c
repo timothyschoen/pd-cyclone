@@ -54,8 +54,8 @@ static void *poltocar_tilde_new(void){
     return(x);
 }
 
-CYCLONE_OBJ_API void poltocar_tilde_setup(void){
-    poltocar_tilde_class = class_new(gensym("poltocar~"), (t_newmethod)poltocar_tilde_new, 0,
+CYCLONE_OBJ_API void cyclone_poltocar_tilde_setup(void){
+    poltocar_tilde_class = class_new(gensym("cyclone/poltocar~"), (t_newmethod)poltocar_tilde_new, 0,
         sizeof(t_poltocar_tilde), CLASS_MULTICHANNEL, 0);
     class_addmethod(poltocar_tilde_class, nullfn, gensym("signal"), 0);
     class_addmethod(poltocar_tilde_class, (t_method)poltocar_tilde_dsp, gensym("dsp"), A_CANT, 0);

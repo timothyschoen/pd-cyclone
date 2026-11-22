@@ -54,8 +54,8 @@ static void *cartopol_tilde_new(void){
     return(x);
 }
 
-CYCLONE_OBJ_API void cartopol_tilde_setup(void){
-    cartopol_tilde_class = class_new(gensym("cartopol~"), (t_newmethod)cartopol_tilde_new, 0,
+CYCLONE_OBJ_API void cyclone_cartopol_tilde_setup(void){
+    cartopol_tilde_class = class_new(gensym("cyclone/cartopol~"), (t_newmethod)cartopol_tilde_new, 0,
         sizeof(t_cartopol_tilde), CLASS_MULTICHANNEL, 0);
     class_addmethod(cartopol_tilde_class, nullfn, gensym("signal"), 0);
     class_addmethod(cartopol_tilde_class, (t_method)cartopol_tilde_dsp, gensym("dsp"), A_CANT, 0);

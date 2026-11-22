@@ -1186,7 +1186,9 @@ static void coll_is_opened(t_coll *x, t_floatarg f, t_floatarg open){
 }
 
 static void check_open(t_coll *x, int open){
-#ifdef PDL2ORK
+#if PLUGDATA
+    sys_vgui("coll_check_open %lld %i", x, open);
+#elif defined(PDL2ORK)
     open ? coll_do_open(x) : coll_do_update(x);
 #else
     sys_vgui("if {[winfo exists .%lx]} {\n", (unsigned long)x->x_common->c_filehandle);
