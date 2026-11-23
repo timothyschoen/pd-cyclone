@@ -346,10 +346,9 @@ static t_int *cycle_perform(t_int *w){
 	
         wrapphase = dphase + phaseoff;
 
-        while(wrapphase >= 1)
-            wrapphase -= 1.;
-        while(wrapphase < 0)
-            wrapphase += 1.;
+        wrapphase -= floor(wrapphase);
+        if(!(wrapphase < 1)) // inf and NaN
+            wrapphase = 0;
         if(usetable)
 			tabphase = wrapphase * cycle_tabsize;
 		else
@@ -371,10 +370,9 @@ static t_int *cycle_perform(t_int *w){
 
         // incrementation step
         dphase += ((double)freq * conv);
-        while(dphase >= 1)
-            dphase -= 1.;
-        while(dphase < 0)
-            dphase += 1.;
+        dphase -= floor(dphase);
+        if(!(dphase < 1)) // inf and NaN
+            dphase = 0;
 	};
     x->x_phase = dphase;
     return(w+6);

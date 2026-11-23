@@ -25,14 +25,10 @@ struct _outlet{
 
 static t_class *bindlist_class = 0; // global variable
 
-typedef struct _bindelem{
-    t_pd                *e_who;
-    struct _bindelem    *e_next;
-}t_bindelem;
-
 typedef struct _bindlist{
     t_pd b_pd;
-    t_bindelem          *b_list;
+    t_pd **b_vec;
+    int b_n;
 }t_bindlist;
 
 typedef struct _grab{
@@ -47,7 +43,8 @@ typedef struct _grab{
     int            *x_ngrabout;     // array; number of grabbed object's outlets
 // traversal helpers:
     t_outconnect   *x_tograbbedcon; // a connection to grabbed object
-    t_bindelem     *x_bindelem;
+    t_bindlist     *x_bindlist;
+    int             x_bindidx;
     int             x_nonreceive;   // flag to signal whether processed non-[receive] object
 }t_grab;
 
@@ -119,7 +116,7 @@ static int grab_prep(t_grab *x, t_object *obj){
 // run prep routines and find bindlist for the send/receive symbol
 static void grab_start(t_grab *x){
     x->x_tograbbedcon = 0;
-    x->x_bindelem = 0;
+    x->x_bindlist = 0;
     x->x_receiver = 0;
     x->x_nonreceive = 0;
     if(x->x_rcv_name){ // if we're looking for a receive name
@@ -131,13 +128,12 @@ static void grab_start(t_grab *x){
             if(*proxy == bindlist_class){ // if proxy is a bindlist
                 // traverse the list until we find a patchable
                 // object ([receive], gatom, etc) with "pd_checkobject"
-                x->x_bindelem = ((t_bindlist *)proxy)->b_list;
-                while(x->x_bindelem){
+                x->x_bindlist = (t_bindlist *)proxy;
+                for(x->x_bindidx = 0; x->x_bindidx < x->x_bindlist->b_n; x->x_bindidx++){
                 	// once we find it, prep it and go from there
-                    if((obj = pd_checkobject(x->x_bindelem->e_who)))
+                    if((obj = pd_checkobject(x->x_bindlist->b_vec[x->x_bindidx])))
                         if(grab_prep(x, obj)) // why 'if'???
                         	return;
-                    x->x_bindelem = x->x_bindelem->e_next;
                 }
             }
             // it's a single object otherwise. If patchable, prep it
@@ -234,10 +230,10 @@ nextremote:
     }
     // once we've processed and done all of one [receive]'s objects, it's on to
     // the next receiver in the bindlist. Run prep again and then goto the top.
-    if(x->x_bindelem){
-        while((x->x_bindelem = x->x_bindelem->e_next)){
+    if(x->x_bindlist){
+        while(++x->x_bindidx < x->x_bindlist->b_n){
             t_object *obj;
-            if((obj = pd_checkobject(x->x_bindelem->e_who))){
+            if((obj = pd_checkobject(x->x_bindlist->b_vec[x->x_bindidx]))){
                 x->x_nonreceive = 0;
                 grab_prep(x, obj);
                 grabbedp = x->x_grabbed;

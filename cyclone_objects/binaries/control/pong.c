@@ -190,10 +190,7 @@ static float pong_ponger(float input, float minval, float maxval, int mode){
 		}
 	else if (mode == 1){// wrapping
 		if(input < minval){
-			returnval = input;
-			while(returnval < minval){
-					returnval += range;
-			};
+			returnval = input - range * floor((input - minval) / range);
 		}
 		else{
 			returnval = fmod(input-minval,maxval-minval) + minval;
