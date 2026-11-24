@@ -312,7 +312,7 @@ static double play_getvecval(t_play *x, int chidx, double phase, int interp){
         ndx = maxindex, frac = 1;
     else frac = phase - ndx;
     t_word *vp = vectable[chidx];
-    if (vp)
+    if (vp && npts > 3) // the interpolation reads 4 points
     {
         vp += ndx;
         a = vp[-1].w_float;

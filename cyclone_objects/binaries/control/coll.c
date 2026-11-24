@@ -1951,10 +1951,8 @@ static void coll_dothread(t_coll *x, int create){
 }
 
 static void coll_threaded(t_coll *x, t_float f){
-    int th = f == 0 ? 0 : 1;
-    if(th != x->x_threaded)
-        coll_dothread(x, th);
-    x->x_threaded = th;
+    // The file i/o thread read and rebuilt the collection while Pd changed it too, so i/o stays on Pd's thread
+    (void)x, (void)f;
 }
 
 static void coll_free(t_coll *x){
@@ -2044,6 +2042,9 @@ static void *coll_new(t_symbol *s, int argc, t_atom *argv){
     return(x);
 	errstate:
 		pd_error(x, "[coll]: improper args");
+        // Don't stay bound to #C, or the next embedded object's data comes here
+        file_free(x->x_filehandle);
+        pd_unbind(&x->x_ob.ob_pd, x->x_bindsym);
 		return NULL;
 }
 
