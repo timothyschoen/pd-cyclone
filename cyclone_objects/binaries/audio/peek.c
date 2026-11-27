@@ -53,9 +53,9 @@ static void peek_set(t_peek *x, t_symbol *s)
 static void peek_float(t_peek *x, t_float f)
 {
     t_cybuf * c = x->x_cybuf;
-    t_word *vp = c->c_vectors[0];
     //second arg is to allow error posting
     cybuf_validate(c, 1);  /* LATER rethink (efficiency, and complaining) */
+    t_word *vp = c->c_vectors[0];
     if (vp)
     {
 	int ndx = (int)f;

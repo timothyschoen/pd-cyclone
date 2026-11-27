@@ -1072,7 +1072,7 @@ static void zl_lookup(t_zl *x, int natoms, t_atom *buf, int banged){
 		int ac2 = x->x_inbuf2.d_natoms, total = 0, i, j;
 		for (i = 0; i < natoms; i++) {
 			//post("total %d", total);
-			if (av1[i].a_type == A_FLOAT && (j = (int)av1[i].a_w.w_float) < ac2) {
+			if (av1[i].a_type == A_FLOAT && (j = (int)av1[i].a_w.w_float) >= 0 && j < ac2) {
 				//post ("index %d", j);
 				buf[total++] = av2[j];
 			}

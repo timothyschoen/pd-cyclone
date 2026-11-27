@@ -64,6 +64,7 @@ static t_class *mtrack_class;
 static t_class *mtr_class;
 
 static void mtrack_play(t_mtrack *tp);
+static double mtrack_getduration(t_mtrack *tp);
 
 static void mtrack_donext(t_mtrack *tp){
  if(tp->tr_ixnext < 0)
@@ -140,7 +141,8 @@ endoftrack:
  tp->tr_atdelta = 0;
  tp->tr_prevtime = 0.;
  tp->tr_mode = MTR_STEPMODE;
- if(tp->tr_loop)
+ // a track without time in it would loop forever right here
+ if(tp->tr_loop && mtrack_getduration(tp) * tp->tr_owner->x_speed * tp->tr_tempo > 0)
      mtrack_play(tp);
 }
 

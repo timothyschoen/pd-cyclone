@@ -85,15 +85,14 @@ static void wave_set(t_wave *x, t_symbol *s)
   
 /*stupid hacks; sorry. This saves a lot of typing.*/
 #define BOUNDS_CHECK() \
-	if (spos < 0) spos = 0; \
+	if (!(spos >= 0)) spos = 0; \
 	else if (spos > maxindex) spos = maxindex; \
-	if (epos > maxindex || epos <= 0) epos = maxindex; \
+	if (!(epos > 0 && epos <= maxindex)) epos = maxindex; \
 	else if (epos < spos) epos = spos; \
 	int siz = (int)(epos - spos + 1.5); \
 	int ndx; \
 	int ch = nch; \
-	if (phase < 0) phase = 0; \
-	else if (phase > 1.0) phase = 0; \
+	if (!(phase >= 0 && phase <= 1.0)) phase = 0; \
 	int sposi = (int)spos; \
 	int eposi = sposi + siz
 	

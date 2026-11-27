@@ -220,8 +220,8 @@ static void *loadmess_new(t_symbol *s, int ac, t_atom *av)
 	    x->defer = -1;
 	    break;
 	  }
-	  x->x_n = x->x_ac = ac-2;
-	  x->x_at = (t_atom *)t_resizebytes(x->x_at,sizeof(t_atom)*(x->x_n+2),sizeof(t_atom)*x->x_n);
+	  x->x_at = (t_atom *)t_resizebytes(x->x_at,sizeof(t_atom)*ac,sizeof(t_atom)*i);
+	  x->x_n = x->x_ac = i; // keep what came before @defer
 	  i = ac;
 	}
       }
