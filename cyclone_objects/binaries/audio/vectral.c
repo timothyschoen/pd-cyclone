@@ -20,6 +20,7 @@ typedef struct _vectral{
     int                x_bufsize;
     t_float           *x_buffer;
     t_float           *x_lastframe;
+    int                x_nlast;
     // rampsmooth and slide state
     double             x_upcoef;
     double             x_downcoef;
@@ -133,6 +134,8 @@ static void vectral_dsp(t_vectral *x, t_signal **sp){
     int nblock = sp[0]->s_n;
     if(nblock > x->x_bufsize)
         nblock = x->x_bufsize;  // CHECKME
+    x->x_lastframe = resizebytes(x->x_lastframe, x->x_nlast * sizeof(*x->x_lastframe), nblock * sizeof(*x->x_lastframe));
+    x->x_nlast = nblock;
     memset(x->x_lastframe, 0, nblock * sizeof(*x->x_lastframe));
     dsp_add(vectral_perform, 6, x, nblock,
 	    sp[0]->s_vec, sp[1]->s_vec, sp[2]->s_vec, sp[3]->s_vec);
@@ -190,7 +193,7 @@ static void vectral_free(t_vectral *x){
     if(x->x_buffer)
         freebytes(x->x_buffer, x->x_bufsize * sizeof(*x->x_buffer));
     if(x->x_lastframe)
-        freebytes(x->x_lastframe, x->x_bufsize * sizeof(*x->x_lastframe));
+        freebytes(x->x_lastframe, x->x_nlast * sizeof(*x->x_lastframe));
 }
 
 static void vectral_size(t_vectral *x, t_floatarg f){
@@ -200,7 +203,7 @@ static void vectral_size(t_vectral *x, t_floatarg f){
 }
 
 static void vectral_clear(t_vectral *x){
-    memset(x->x_lastframe, 0, x->x_bufsize * sizeof(*x->x_lastframe));
+    memset(x->x_lastframe, 0, x->x_nlast * sizeof(*x->x_lastframe));
 }
 
 static void *vectral_new(t_floatarg f){
@@ -210,7 +213,8 @@ static void *vectral_new(t_floatarg f){
         x->x_bufsize = (i > 0 ? i : VECTRAL_DEFSIZE);
     if(!(x->x_buffer = getbytes(x->x_bufsize * sizeof(*x->x_buffer))))
         goto failure;
-    if(!(x->x_lastframe = getbytes(x->x_bufsize * sizeof(*x->x_lastframe))))
+    x->x_nlast = x->x_bufsize;
+    if(!(x->x_lastframe = getbytes(x->x_nlast * sizeof(*x->x_lastframe))))
         goto failure;
     x->x_perform = vectral_perform_bypass;
     inlet_new((t_object *)x, (t_pd *)x, &s_signal, &s_signal);
