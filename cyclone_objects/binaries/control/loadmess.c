@@ -50,10 +50,17 @@ static void loadmess_bang(t_loadmess *x)
     outlet_symbol(x->x_obj.ob_outlet, atom_getsymbol(x->x_at));
   else if(x->x_type == A_NULL)
     outlet_bang(x->x_obj.ob_outlet);
-  else if(x->x_type == A_COMMA)
-    outlet_anything(x->x_obj.ob_outlet, x->x_sym, x->x_ac, x->x_at);
-  else if(x->x_type == A_GIMME)
-    outlet_list(x->x_obj.ob_outlet, &s_list, x->x_ac, x->x_at);
+  else if(x->x_type == A_COMMA || x->x_type == A_GIMME)
+    { // send a copy, a set from downstream frees x_at
+      t_int n = x->x_ac;
+      t_atom *at = (t_atom *)getbytes(n * sizeof(t_atom));
+      memcpy(at, x->x_at, n * sizeof(t_atom));
+      if(x->x_type == A_COMMA)
+        outlet_anything(x->x_obj.ob_outlet, x->x_sym, n, at);
+      else
+        outlet_list(x->x_obj.ob_outlet, &s_list, n, at);
+      freebytes(at, n * sizeof(t_atom));
+    }
   else if(x->x_type == A_POINTER)
     outlet_pointer(x->x_obj.ob_outlet, (t_gpointer *)x->x_at->a_w.w_gpointer);
 }
@@ -79,6 +86,8 @@ static void loadmess_defer(t_loadmess *x)
 static void loadmess_set(t_loadmess *x, t_symbol *s, int ac, t_atom *av)
 {
   t_int i;
+  t_atom *old_at = x->x_at;
+  t_int old_n = x->x_n;
   x->x_type = A_NULL;
   if(ac==0)
     {
@@ -131,7 +140,8 @@ static void loadmess_set(t_loadmess *x, t_symbol *s, int ac, t_atom *av)
       for(i=0;i<ac;i++)
 	x->x_at[i] = av[i];
     }
-
+  if(old_at)
+    freebytes(old_at, old_n * sizeof(t_atom));
 }
 
 static void loadmess_click(t_loadmess *x, t_floatarg xpos, t_floatarg ypos,
